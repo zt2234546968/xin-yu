@@ -1,0 +1,737 @@
+.zhiping-container {
+  padding: 20px;
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.header-container h2 {
+  margin: 0;
+  color: #333;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.el-button {
+  margin-bottom: 0;
+}
+
+.el-table {
+  margin-top: 20px;
+}
+
+.el-dialog__body {
+  padding: 15px 20px;
+}
+
+.el-form-item {
+  margin-bottom: 15px;
+}
+
+.el-form-item__label {
+  font-weight: 500;
+  padding: 0 0 0 0;
+}
+
+.el-input__inner {
+  border-radius: 4px;
+  height: 32px;
+}
+
+.el-textarea__inner {
+  border-radius: 4px;
+  resize: vertical;
+  padding: 8px 12px;
+}
+
+.dialog-footer {
+  text-align: right;
+  padding-top: 10px;
+}
+
+.dialog-footer .el-button {
+  margin-left: 10px;
+  margin-bottom: 0;
+  padding: 8px 15px;
+}
+
+/* 状态输入框宽度 */
+:deep(.status-input) .el-input__inner {
+  width: 160px !important;
+}
+
+/* 任务信息样式 */
+.task-info {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  width: 100%;
+}
+
+/* 任务图片 */
+.task-image {
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+
+.image-thumbnail {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* 右侧盒子 */
+.right-box {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+/* 上部分：ASIN、星评和国旗 */
+.upper-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+/* ASIN */
+.asin {
+  font-weight: bold;
+  color: var(--app-primary);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 星评和国旗 */
+.rating-flag {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* 星评 */
+.stars {
+  color: #fadb14;
+  font-size: 16px;
+}
+
+.star {
+  margin-right: 2px;
+}
+
+/* 国旗图片 */
+.flag {
+  display: flex;
+  align-items: center;
+}
+
+.flag-thumbnail {
+  width: 50px;
+  height: 30px;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+/* 下部分：评论内容 */
+.lower-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* 评论标题 */
+.review-title {
+  font-size: 14px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+/* 评论内容 */
+.review-content {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  width: 100%;
+}
+
+/* 反馈链接 */
+.feedback-link {
+  color: var(--app-primary);
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+  max-width: 100%;
+}
+
+.feedback-link:hover {
+  text-decoration: none;
+}
+
+/* 反馈图片 */
+.feedback-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.feedback-image img {
+  width: 120px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+/* 国家选择下拉框样式 */
+.country-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 5px 0;
+}
+
+.country-name {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.country-flag {
+  width: 30px;
+  height: 20px;
+  object-fit: cover;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* 选中国家国旗样式 */
+.selected-country-flag {
+  width: 20px;
+  height: 15px;
+  object-fit: cover;
+  border-radius: 2px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+/* 星星评分样式 */
+.star-rating {
+  display: inline-block;
+}
+
+.star {
+  font-size: 24px;
+  cursor: pointer;
+  margin-right: 5px;
+  transition: color 0.2s, transform 0.2s;
+  color: #e0e0e0;
+}
+
+.star.el-icon-star-on {
+  color: var(--app-warning);
+}
+
+.star.el-icon-star-off {
+  color: #e0e0e0;
+}
+
+.star:hover,
+.star.hover,
+.star.active {
+  color: var(--app-warning);
+  transform: scale(1.1);
+}
+
+/* 列表中的星星颜色 */
+.right-box .stars .star.el-icon-star-on {
+  color: var(--app-warning);
+}
+
+.right-box .stars .star.el-icon-star-off {
+  color: #c0c4cc;
+}
+
+/* ========== 详情侧边栏新样式 ========== */
+.detail-content {
+  padding: 0 20px 20px;
+  background: #f5f7fa;
+  min-height: calc(100vh - 60px);
+}
+
+/* 顶部状态大卡片 */
+.detail-header-card {
+  margin-bottom: 16px;
+}
+
+.task-status-large {
+  border-radius: 16px;
+  padding: 24px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.task-status-large::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.task-status-large::after {
+  content: '';
+  position: absolute;
+  bottom: -30%;
+  left: -10%;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.status-bg-0 {
+  background: linear-gradient(135deg, var(--app-primary) 0%, var(--app-accent) 100%);
+}
+
+.status-bg-1 {
+  background: linear-gradient(135deg, var(--app-warning) 0%, var(--app-warning) 100%);
+}
+
+.status-bg-2 {
+  background: linear-gradient(135deg, var(--app-success) 0%, var(--app-success) 100%);
+}
+
+.status-bg-3 {
+  background: linear-gradient(135deg, var(--app-danger) 0%, var(--app-danger) 100%);
+}
+
+.status-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.status-indicator {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+.indicator-0 {
+  box-shadow: 0 0 0 4px rgba(144, 147, 153, 0.3);
+}
+
+.indicator-1 {
+  box-shadow: 0 0 0 4px rgba(230, 162, 60, 0.3);
+}
+
+.indicator-2 {
+  box-shadow: 0 0 0 4px rgba(103, 194, 58, 0.3);
+}
+
+.indicator-3 {
+  box-shadow: 0 0 0 4px rgba(245, 108, 108, 0.3);
+}
+
+.status-text {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.status-select {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  padding: 6px 14px;
+  min-width: 120px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.status-select:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.status-select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+}
+
+:deep(.status-select .el-input__inner) {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding: 0;
+}
+
+:deep(.status-select .el-input__icon) {
+  color: #fff;
+  font-size: 18px;
+}
+
+:deep(.status-select .el-select-dropdown) {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+:deep(.status-select .el-dropdown-menu__item) {
+  font-size: 14px;
+  padding: 10px 20px;
+  color: #333;
+}
+
+:deep(.status-select .el-dropdown-menu__item:hover) {
+  background: #f5f7fa;
+}
+
+:deep(.status-select .el-dropdown-menu__item.selected) {
+  color: var(--app-primary);
+  font-weight: 600;
+}
+
+.task-meta {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  opacity: 0.9;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+.country-flag-small {
+  width: 20px;
+  height: 14px;
+  border-radius: 2px;
+  object-fit: cover;
+}
+
+/* 通用卡片样式 */
+.detail-card {
+  background: #fff;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 18px;
+  background: #fff;
+  border-bottom: 1px solid #f0f0f0;
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+}
+
+.card-header i {
+  font-size: 16px;
+  color: var(--app-primary);
+}
+
+.card-body {
+  padding: 16px 18px;
+}
+
+/* 信息行 */
+.info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px dashed #f0f0f0;
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-size: 13px;
+  color: #909399;
+  flex-shrink: 0;
+}
+
+.info-value {
+  font-size: 14px;
+  color: #333;
+  text-align: right;
+}
+
+.info-value-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+  flex: 1;
+  margin-left: 16px;
+}
+
+.info-value.asin {
+  color: var(--app-primary);
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+.info-value.warranty {
+  color: var(--app-warning);
+  font-weight: 500;
+}
+
+.info-value.empty {
+  color: #c0c4cc;
+}
+
+/* 星评展示 */
+.star-display {
+  display: flex;
+  gap: 2px;
+}
+
+.star-display .star {
+  font-size: 16px;
+}
+
+.star-display .el-icon-star-on {
+  color: var(--app-warning);
+}
+
+.star-display .el-icon-star-off {
+  color: #e0e0e0;
+}
+
+/* 评论区域 */
+.review-section {
+  padding: 4px 0;
+}
+
+.review-section .review-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 10px 0;
+  line-height: 1.4;
+}
+
+.review-section .review-text {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.6;
+  margin: 0;
+  word-break: break-all;
+}
+
+/* 图片样式 */
+.detail-image {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+}
+
+.detail-image-small {
+  width: 100px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+/* 反馈链接按钮 */
+.feedback-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: linear-gradient(135deg, var(--app-primary) 0%, var(--app-accent) 100%);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 13px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.feedback-link-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  text-decoration: none;
+  color: #fff;
+}
+
+/* 抽屉标题样式覆盖 */
+:deep(.el-drawer__header) {
+  margin-bottom: 0;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+:deep(.el-drawer__header span) {
+  font-weight: 600;
+  font-size: 16px;
+  color: #333;
+}
+
+/* 提示文本样式 */
+.tip-text {
+  font-size: 12px;
+  color: #909399;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ========== 完成反馈对话框样式 ========== */
+.complete-feedback-form {
+  margin-bottom: 10px;
+}
+
+.complete-feedback-input {
+  width: 100%;
+}
+
+/* 图片上传区域 */
+.image-upload-area {
+  width: 100%;
+}
+
+.hidden-file-input {
+  display: none;
+}
+
+.image-upload-btn {
+  width: 100%;
+  height: 120px;
+  border: 2px dashed #dcdfe6;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #f5f7fa;
+}
+
+.image-upload-btn:hover {
+  border-color: var(--app-primary);
+  background: #f0f2ff;
+}
+
+.image-upload-btn i {
+  font-size: 32px;
+  color: #c0c4cc;
+  margin-bottom: 8px;
+}
+
+.image-upload-btn p {
+  font-size: 13px;
+  color: #909399;
+  margin: 0;
+}
+
+.image-upload-btn:hover i,
+.image-upload-btn:hover p {
+  color: var(--app-primary);
+}
+
+/* 图片预览 */
+.image-preview {
+  width: 100%;
+  position: relative;
+}
+
+.preview-image {
+  width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 8px;
+  display: block;
+  border: 2px solid #e0e0e0;
+}
+
+.image-actions {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  display: flex;
+  gap: 8px;
+}

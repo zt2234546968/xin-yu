@@ -1,0 +1,13 @@
+.management-card {
+  background: #ffffff;
+}
+
+.table-shell {
+  overflow: hidden;
+  border: 1px solid var(--app-border);
+  border-radius: 8px;
+}
+
+:deep(.el-table__empty-block) {
+  min-height: 360px;
+}

@@ -1,0 +1,28 @@
+.management-card {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, #ffffff 100%);
+}
+
+.table-shell {
+  overflow: hidden;
+  border: 1px solid var(--app-border);
+  border-radius: 8px;
+}
+
+.code-cell {
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 12px;
+  color: var(--app-primary);
+  font-family: Consolas, Monaco, monospace;
+  font-size: 14px;
+  font-weight: 700;
+  background: var(--app-accent-soft);
+  border: 1px solid #c8e6e5;
+  border-radius: 6px;
+}
+
+:deep(.el-table__empty-block) {
+  min-height: 360px;
+}
