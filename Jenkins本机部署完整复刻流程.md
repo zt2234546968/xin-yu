@@ -62,6 +62,18 @@ git --version
 
 只要这些命令都能正常输出版本，Jenkins 构建环境就基本齐了。
 
+当前阿里云服务器已确认环境：
+
+```text
+Java：Alibaba Dragonwell OpenJDK 21
+Maven：Apache Maven 3.9.9，安装目录 /opt/maven
+Node.js：20.20.2
+npm：10.8.2
+Nginx：1.26.2
+MySQL：8.0.46 MySQL Community Server
+Git：2.43.7
+```
+
 ## 1. 服务器环境
 
 推荐配置：
@@ -87,22 +99,58 @@ CPU：2 核及以上
 
 ## 2. 安装基础工具
 
-Jenkins 新版本建议 Java 21，项目后端使用 Java 17 也可以在 Java 21 上运行。
+Jenkins 新版本建议 Java 21，项目后端使用 Java 17 也可以在 Java 21 上运行。当前服务器已经安装 Alibaba Dragonwell OpenJDK 21：
 
 ```bash
-sudo yum install -y wget git tar gzip fontconfig maven nginx
-sudo yum install -y java-21-openjdk java-21-openjdk-devel
 java -version
+```
+
+### 2.1 Maven 3.9.9
+
+不要直接依赖系统源里的 Maven 版本，当前服务器使用固定版本 Maven 3.9.9：
+
+```bash
+cd /opt
+sudo wget https://archive.apache.org/dist/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz
+sudo tar -zxvf apache-maven-3.9.9-bin.tar.gz
+sudo ln -sfn /opt/apache-maven-3.9.9 /opt/maven
+printf '%s\n' 'export MAVEN_HOME=/opt/maven' 'export PATH=$MAVEN_HOME/bin:$PATH' | sudo tee /etc/profile.d/maven.sh > /dev/null
+source /etc/profile.d/maven.sh
 mvn -v
 ```
 
-安装 Node.js 22：
+### 2.2 Node.js 20
 
 ```bash
-curl -fsSL https://rpm.nodesource.com/setup_22.x | sudo bash -
+curl -fsSL https://rpm.nodesource.com/setup_20.x | sudo bash -
 sudo yum install -y nodejs
 node -v
 npm -v
+```
+
+当前服务器已确认：
+
+```text
+node v20.20.2
+npm 10.8.2
+```
+
+### 2.3 Nginx
+
+当前服务器已经存在 Nginx 1.26.2。如果 `sudo yum install -y nginx` 提示被 exclude 过滤，但 `nginx -v` 能看到版本，可以继续使用现有 Nginx。
+
+```bash
+nginx -v
+sudo systemctl enable nginx
+sudo systemctl start nginx
+sudo nginx -t
+```
+
+### 2.4 Git
+
+```bash
+sudo yum install -y git
+git --version
 ```
 
 ## 3. 安装 Jenkins
@@ -185,11 +233,94 @@ sudo chown -R jenkins:jenkins /opt/xinyu
 
 ## 6. 准备数据库
 
-安装 MySQL 8 并创建数据库：
+项目推荐使用 MySQL 8.0。当前服务器最终使用的是 MySQL Community Server 8.0.46。
+
+如果服务器上原来有面板或脚本安装的 MariaDB，可能会出现类似：
+
+```text
+/www/server/mysql/bin/mariadbd
+```
+
+这说明 yum 包已经卸载，但 `/www/server/mysql` 下还有旧 MariaDB 在运行。确认没有重要数据后，可以直接清理：
+
+```bash
+sudo systemctl stop mysqld
+sudo systemctl disable mysqld
+sudo pkill -f mariadbd || true
+sudo pkill -f mysqld_safe || true
+ps -ef | grep -E 'mysqld|mariadbd' | grep -v grep
+
+sudo rm -rf /www/server/mysql
+sudo rm -rf /www/server/data
+sudo rm -f /etc/my.cnf
+sudo rm -f /etc/init.d/mysqld
+sudo rm -f /etc/rc.d/init.d/mysqld
+sudo systemctl daemon-reload
+```
+
+安装 MySQL 8.0 官方源和服务端：
+
+```bash
+cd /tmp
+rm -f mysql80-community-release-el8.rpm
+wget https://repo.mysql.com/mysql80-community-release-el8.rpm
+sudo rpm -Uvh mysql80-community-release-el8.rpm
+sudo rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2023
+sudo yum clean all
+sudo yum makecache
+sudo yum install -y mysql-community-server --disableexcludes=all
+```
+
+启动 MySQL：
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable mysqld
+sudo systemctl start mysqld
+sudo systemctl status mysqld --no-pager
+mysql --version
+```
+
+获取临时 root 密码：
+
+```bash
+sudo grep 'temporary password' /var/log/mysqld.log
+```
+
+第一次登录后必须先设置一个符合策略的强密码，再降低策略，最后才可以改成简单密码：
+
+```sql
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'Root@2026_XinYu!';
+SET GLOBAL validate_password.policy = LOW;
+SET GLOBAL validate_password.length = 6;
+ALTER USER 'root'@'localhost' IDENTIFIED BY '132321';
+```
+
+创建项目数据库和项目用户：
 
 ```sql
 CREATE DATABASE IF NOT EXISTS xin_yu_db DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER IF NOT EXISTS 'xinyu'@'localhost' IDENTIFIED BY '132321';
+GRANT ALL PRIVILEGES ON xin_yu_db.* TO 'xinyu'@'localhost';
+FLUSH PRIVILEGES;
 ```
+
+验证：
+
+```bash
+mysql -uxinyu -p
+```
+
+输入密码 `132321` 后执行：
+
+```sql
+SHOW DATABASES;
+USE xin_yu_db;
+SHOW TABLES;
+exit;
+```
+
+`SHOW TABLES;` 为空是正常的，Jenkins 首次部署后，后端启动时会通过 Flyway 自动建表。
 
 项目使用 Flyway，后端启动时会自动执行：
 
@@ -214,28 +345,33 @@ V3__marketplace_task_modules.sql
 
 ## 7. 后端生产配置
 
-创建配置文件：
+这是服务器上的运行配置文件，不是本地项目代码。它只存在服务器上，不提交到 GitHub。
+
+创建配置目录和文件：
 
 ```bash
-sudo vi /opt/xinyu/config/application-local.yml
-```
-
-写入：
-
-```yaml
+sudo mkdir -p /opt/xinyu/config
+sudo tee /opt/xinyu/config/application-local.yml > /dev/null <<'EOF'
 server:
   port: 8080
 
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/xin_yu_db?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
-    username: root
-    password: 你的数据库密码
+    username: xinyu
+    password: 132321
   flyway:
     enabled: true
     locations: classpath:db/migration
     baseline-on-migrate: true
     validate-on-migrate: false
+EOF
+```
+
+检查：
+
+```bash
+cat /opt/xinyu/config/application-local.yml
 ```
 
 注意：
@@ -243,20 +379,15 @@ spring:
 ```text
 不要把 application-local.yml 提交到 GitHub
 不要把数据库密码写进 Jenkinsfile
-生产环境建议使用独立 MySQL 用户，不要长期使用 root
+当前测试服务器使用 xinyu / 132321，正式环境建议改成更强密码
 ```
 
 ## 8. 配置 systemd 服务
 
-创建服务文件：
+创建服务文件，使用 `tee` 可以避免手动编辑器输入错误：
 
 ```bash
-sudo vi /etc/systemd/system/xinyu-backend.service
-```
-
-写入：
-
-```ini
+sudo tee /etc/systemd/system/xinyu-backend.service > /dev/null <<'EOF'
 [Unit]
 Description=XinYu Cross-border E-commerce Backend
 After=network.target mysqld.service mysql.service
@@ -270,6 +401,7 @@ RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
+EOF
 ```
 
 启用服务：
@@ -298,18 +430,15 @@ which systemctl
 创建 sudoers 文件：
 
 ```bash
-sudo visudo -f /etc/sudoers.d/xinyu-jenkins
-```
-
-写入：
-
-```text
+sudo tee /etc/sudoers.d/xinyu-jenkins > /dev/null <<'EOF'
 jenkins ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart xinyu-backend, /usr/bin/systemctl status xinyu-backend
+EOF
 ```
 
-保存后检查：
+检查语法和内容：
 
 ```bash
+sudo visudo -cf /etc/sudoers.d/xinyu-jenkins
 sudo cat /etc/sudoers.d/xinyu-jenkins
 ```
 
@@ -631,14 +760,19 @@ Couldn't find any revision to build
 ### 找不到 mvn
 
 ```bash
-sudo yum install -y maven
+cd /opt
+sudo wget https://archive.apache.org/dist/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz
+sudo tar -zxvf apache-maven-3.9.9-bin.tar.gz
+sudo ln -sfn /opt/apache-maven-3.9.9 /opt/maven
+printf '%s\n' 'export MAVEN_HOME=/opt/maven' 'export PATH=$MAVEN_HOME/bin:$PATH' | sudo tee /etc/profile.d/maven.sh > /dev/null
+source /etc/profile.d/maven.sh
 mvn -v
 ```
 
 ### 找不到 npm 或 node
 
 ```bash
-curl -fsSL https://rpm.nodesource.com/setup_22.x | sudo bash -
+curl -fsSL https://rpm.nodesource.com/setup_20.x | sudo bash -
 sudo yum install -y nodejs
 node -v
 npm -v
