@@ -15,6 +15,8 @@ pipeline {
         BACKEND_DIR = 'backend'
         FRONTEND_DIR = 'leading'
         JAR_NAME = 'cross-border-ecommerce-backend-1.0.0.jar'
+        MAVEN_HOME = '/opt/maven'
+        PATH+MAVEN = '/opt/maven/bin'
     }
 
     stages {

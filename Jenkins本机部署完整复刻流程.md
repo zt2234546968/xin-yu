@@ -605,6 +605,7 @@ Build with Parameters
 
 ```text
 拉取代码
+把 /opt/maven/bin 加入 Jenkins 构建 PATH
 后端执行 mvn clean package -DskipTests
 前端执行 npm install
 前端执行 npm run build
@@ -791,6 +792,21 @@ Couldn't find any revision to build
 ```
 
 ### 找不到 mvn
+
+如果服务器终端执行 `mvn -v` 正常，但 Jenkins Console Output 里出现：
+
+```text
+mvn: command not found
+```
+
+原因是 Jenkins 执行构建 shell 时不会自动加载登录用户的 `/etc/profile.d/maven.sh`。当前项目的 `Jenkinsfile` 已显式配置：
+
+```groovy
+MAVEN_HOME = '/opt/maven'
+PATH+MAVEN = '/opt/maven/bin'
+```
+
+所以正常情况下 Jenkins 能直接找到 Maven。若服务器 Maven 尚未安装，按下面命令安装：
 
 ```bash
 cd /opt
