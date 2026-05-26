@@ -16,7 +16,6 @@ pipeline {
         FRONTEND_DIR = 'leading'
         JAR_NAME = 'cross-border-ecommerce-backend-1.0.0.jar'
         MAVEN_HOME = '/opt/maven'
-        PATH+MAVEN = '/opt/maven/bin'
     }
 
     stages {
@@ -29,7 +28,7 @@ pipeline {
         stage('Build Backend') {
             steps {
                 dir(env.BACKEND_DIR) {
-                    sh 'mvn clean package -DskipTests'
+                    sh '/opt/maven/bin/mvn clean package -DskipTests'
                 }
             }
         }
