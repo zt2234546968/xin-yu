@@ -58,8 +58,8 @@ pipeline {
                     rm -rf "${DEPLOY_DIR}/web"/*
                     cp -r "${FRONTEND_DIR}/dist"/* "${DEPLOY_DIR}/web/"
 
-                    sudo systemctl restart "${SERVICE_NAME}"
-                    sudo systemctl status "${SERVICE_NAME}" --no-pager
+                    sudo /usr/bin/systemctl restart "${SERVICE_NAME}"
+                    sudo /usr/bin/systemctl status "${SERVICE_NAME}" --no-pager
                 '''
             }
         }

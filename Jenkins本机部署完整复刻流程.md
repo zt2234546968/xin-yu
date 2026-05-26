@@ -431,7 +431,7 @@ which systemctl
 
 ```bash
 sudo tee /etc/sudoers.d/xinyu-jenkins > /dev/null <<'EOF'
-jenkins ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart xinyu-backend, /usr/bin/systemctl status xinyu-backend
+jenkins ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart xinyu-backend, /usr/bin/systemctl status xinyu-backend --no-pager
 EOF
 ```
 
@@ -850,8 +850,24 @@ sudo cat /etc/sudoers.d/xinyu-jenkins
 内容必须包含：
 
 ```text
-jenkins ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart xinyu-backend, /usr/bin/systemctl status xinyu-backend
+jenkins ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart xinyu-backend, /usr/bin/systemctl status xinyu-backend --no-pager
 ```
+
+如果 Jenkins Console Output 里出现：
+
+```text
+sudo: a terminal is required to read the password
+sudo: a password is required
+```
+
+通常是 sudoers 里的命令参数没有和 Jenkinsfile 完全一致。当前 Jenkinsfile 执行的是：
+
+```bash
+sudo /usr/bin/systemctl restart xinyu-backend
+sudo /usr/bin/systemctl status xinyu-backend --no-pager
+```
+
+所以 sudoers 必须同时包含上面两条命令，其中 `status` 后面的 `--no-pager` 不能漏。
 
 ### 后端启动失败
 
