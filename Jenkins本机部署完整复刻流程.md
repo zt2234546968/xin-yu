@@ -444,15 +444,37 @@ sudo cat /etc/sudoers.d/xinyu-jenkins
 
 ## 10. 配置 Nginx
 
-创建配置：
+当前服务器的 Nginx 不是标准 yum 原生目录，而是面板安装目录：
 
-```bash
-sudo vi /etc/nginx/conf.d/xinyu.conf
+```text
+主配置：/www/server/nginx/conf/nginx.conf
+站点配置目录：/www/server/panel/vhost/nginx/*.conf
+启动程序：/www/server/nginx/sbin/nginx
 ```
 
-写入：
+如果不确定当前服务器 Nginx 配置目录，先执行：
 
-```nginx
+```bash
+sudo nginx -t
+sudo grep -n "include" /www/server/nginx/conf/nginx.conf
+```
+
+当前服务器已经确认主配置里有：
+
+```text
+include /www/server/panel/vhost/nginx/*.conf;
+```
+
+所以项目站点配置写到：
+
+```text
+/www/server/panel/vhost/nginx/xinyu.conf
+```
+
+写入配置：
+
+```bash
+sudo tee /www/server/panel/vhost/nginx/xinyu.conf > /dev/null <<'EOF'
 server {
     listen 80;
     server_name _;
@@ -472,15 +494,26 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 }
+EOF
 ```
 
-检查并重载：
+检查并重启：
 
 ```bash
 sudo nginx -t
-sudo systemctl enable nginx
-sudo systemctl reload nginx
+sudo systemctl restart nginx
+sudo systemctl status nginx --no-pager
 ```
+
+如果看到 `Active: active (running)`，说明 Nginx 已经正常运行。
+
+如果看到类似：
+
+```text
+nginx.service is not a native service, redirecting to systemd-sysv-install
+```
+
+这是面板 Nginx 使用 `/etc/init.d/nginx` 脚本被 systemd 托管，不是错误，只要服务状态是 `active (running)` 即可。
 
 ## 11. 创建 Jenkins Pipeline
 
