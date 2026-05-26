@@ -95,7 +95,7 @@ CPU：2 核及以上
 3306  MySQL，仅内网或本机访问
 ```
 
-后端默认监听 `8080`，但生产环境建议只让 Nginx 访问后端，不直接暴露后端端口。
+Jenkins 使用 `8080`。为避免端口冲突，当前服务器后端监听 `8081`，生产访问由 Nginx 对外暴露 `80` 并反向代理 `/api`。
 
 ## 2. 安装基础工具
 
@@ -353,7 +353,7 @@ V3__marketplace_task_modules.sql
 sudo mkdir -p /opt/xinyu/config
 sudo tee /opt/xinyu/config/application-local.yml > /dev/null <<'EOF'
 server:
-  port: 8080
+  port: 8081
 
 spring:
   datasource:
@@ -487,7 +487,7 @@ server {
     }
 
     location /api/ {
-        proxy_pass http://127.0.0.1:8080/api/;
+        proxy_pass http://127.0.0.1:8081/api/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -657,9 +657,9 @@ Deploy
 其中：
 
 ```text
-Build Backend：执行 mvn clean package -DskipTests
+Build Backend：执行 /opt/maven/bin/mvn clean package -DskipTests
 Build Frontend：执行 npm install 和 npm run build
-Deploy：复制 Jar、复制前端 dist、重启 xinyu-backend
+Deploy：复制 Jar、复制前端 dist、重启 xinyu-backend，等待 12 秒后检查服务状态
 ```
 
 看到下面类似日志代表 Jenkinsfile 执行完成：
@@ -864,6 +864,7 @@ sudo: a password is required
 
 ```bash
 sudo /usr/bin/systemctl restart xinyu-backend
+sleep 12
 sudo /usr/bin/systemctl status xinyu-backend --no-pager
 ```
 
@@ -883,8 +884,25 @@ journalctl -u xinyu-backend -n 100 --no-pager
 数据库地址、账号、密码是否正确
 xin_yu_db 是否存在
 Flyway 是否迁移失败
-8080 端口是否被占用
+8081 端口是否被占用
 /opt/xinyu/config/application-local.yml 是否存在
+```
+
+当前服务器 Jenkins 已占用 `8080`，所以后端必须使用 `8081`。如果日志出现：
+
+```text
+Web server failed to start. Port 8080 was already in use.
+```
+
+说明后端端口仍然配置成了 `8080`。检查并修正：
+
+```bash
+cat /opt/xinyu/config/application-local.yml
+sudo sed -i 's/port: 8080/port: 8081/' /opt/xinyu/config/application-local.yml
+sudo sed -i 's#http://127.0.0.1:8080/api/#http://127.0.0.1:8081/api/#' /www/server/panel/vhost/nginx/xinyu.conf
+sudo nginx -t
+sudo systemctl restart nginx
+sudo systemctl restart xinyu-backend
 ```
 
 如果报数据库连接失败，先在服务器上测试：
@@ -927,7 +945,7 @@ sudo systemctl status nginx --no-pager
 检查后端是否监听：
 
 ```bash
-curl http://127.0.0.1:8080/api
+curl http://127.0.0.1:8081/api
 sudo systemctl status xinyu-backend --no-pager
 ```
 
@@ -943,7 +961,7 @@ sudo systemctl status xinyu-backend --no-pager
 
 ```nginx
 location /api/ {
-    proxy_pass http://127.0.0.1:8080/api/;
+    proxy_pass http://127.0.0.1:8081/api/;
 }
 ```
 

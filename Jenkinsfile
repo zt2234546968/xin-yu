@@ -59,6 +59,7 @@ pipeline {
                     cp -r "${FRONTEND_DIR}/dist"/* "${DEPLOY_DIR}/web/"
 
                     sudo /usr/bin/systemctl restart "${SERVICE_NAME}"
+                    sleep 12
                     sudo /usr/bin/systemctl status "${SERVICE_NAME}" --no-pager
                 '''
             }
