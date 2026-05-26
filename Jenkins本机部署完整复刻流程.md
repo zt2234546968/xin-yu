@@ -89,13 +89,17 @@ CPU：2 核及以上
 
 ```text
 22    SSH
-80    网站访问
+80    服务器原有面板默认站点或旧站点，当前项目不使用
 443   HTTPS
+8000  XinYu 前端访问
 8080  Jenkins 管理页面，正式环境建议限制来源 IP
+8081  XinYu 后端接口和 Swagger，正式环境建议只允许内网或调试阶段开放
 3306  MySQL，仅内网或本机访问
 ```
 
-Jenkins 使用 `8080`。为避免端口冲突，当前服务器后端监听 `8081`，生产访问由 Nginx 对外暴露 `80` 并反向代理 `/api`。
+Jenkins 使用 `8080`。为避免端口冲突，当前服务器后端监听 `8081`，前端由 Nginx 对外暴露 `8000`，并把 `/api` 反向代理到 `8081`。
+
+注意：当前服务器的 `80` 端口已经被面板默认站点或旧站点占用。访问 `http://8.148.7.94/` 看到 WordPress 数据库错误或“站点创建成功”，不代表本项目前端部署失败；本项目前端访问地址是 `http://8.148.7.94:8000/`。
 
 ## 2. 安装基础工具
 
@@ -476,8 +480,8 @@ include /www/server/panel/vhost/nginx/*.conf;
 ```bash
 sudo tee /www/server/panel/vhost/nginx/xinyu.conf > /dev/null <<'EOF'
 server {
-    listen 80;
-    server_name _;
+    listen 8000;
+    server_name 8.148.7.94;
 
     root /opt/xinyu/web;
     index index.html;
@@ -503,6 +507,8 @@ EOF
 sudo nginx -t
 sudo systemctl restart nginx
 sudo systemctl status nginx --no-pager
+sudo ss -lntp | grep ':8000'
+curl -I http://127.0.0.1:8000/
 ```
 
 如果看到 `Active: active (running)`，说明 Nginx 已经正常运行。
@@ -672,7 +678,7 @@ Finished: SUCCESS
 构建成功后访问：
 
 ```text
-http://服务器公网IP/
+http://服务器公网IP:8000/
 ```
 
 登录账号：
@@ -964,6 +970,33 @@ location /api/ {
     proxy_pass http://127.0.0.1:8081/api/;
 }
 ```
+
+### 访问公网 IP 根路径看到旧站点或数据库错误
+
+如果访问：
+
+```text
+http://服务器公网IP/
+```
+
+看到 WordPress 数据库错误、面板默认页或“站点创建成功”，说明命中的是服务器 `80` 端口已有站点，不是本项目。
+
+当前项目使用 `8000` 端口：
+
+```text
+http://服务器公网IP:8000/
+```
+
+如果 `8000` 访问不到，依次检查：
+
+```bash
+sudo nginx -t
+sudo systemctl restart nginx
+sudo ss -lntp | grep ':8000'
+curl -I http://127.0.0.1:8000/
+```
+
+如果服务器本机 `curl` 正常，但浏览器公网访问不通，去阿里云安全组放行 TCP `8000`。
 
 ## 16. 日常发布流程
 

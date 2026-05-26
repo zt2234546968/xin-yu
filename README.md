@@ -64,6 +64,14 @@ npm run dev
 - 后端接口地址: `http://localhost:8080/api`
 - Swagger: `http://localhost:8080/api/swagger-ui.html`
 
+服务器部署访问：
+
+- Jenkins: `http://8.148.7.94:8080/`
+- 前端: `http://8.148.7.94:8000/`
+- Swagger: `http://8.148.7.94:8081/api/swagger-ui/index.html`
+
+部署接力和注意事项见 [开发文档/AI部署接力文档.md](开发文档/AI部署接力文档.md)。
+
 ## 当前业务约定
 
 - 国家为固定字典，美国必须排在第一；后端会自动初始化固定国家，并隐藏非固定国家数据。
